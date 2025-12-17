@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-section">
+    <h1><i class="ph ph-plus-circle"></i> Ajouter une carte</h1>
+    
+    <form method='POST' action='/append'>
+        <input type='text' name='chinese' placeholder='Caractères chinois (ex: 你好)' autofocus autocomplete="off">
+        <input type='text' name='pinyin' placeholder='Pinyin (ex: nǐ hǎo)' required autocomplete="off">
+        <input type='text' name='french' placeholder='Traduction française' required autocomplete="off">
+        
+        <select name='hsk_level' required>
+            <option value="" disabled selected>Niveau HSK</option>
+            <option value='1'>HSK 1</option>
+            <option value='2'>HSK 2</option>
+            <option value='3'>HSK 3</option>
+            <option value='4'>HSK 4</option>
+            <option value='5'>HSK 5</option>
+            <option value='6'>HSK 6</option>
+        </select>
+
+        <button class=button type='submit'>Ajouter à ma bibliothèque</button>
+    </form>
+
+    {% if message %}
+        <p class="message"><i class="ph ph-check-circle"></i> {{ message }}</p>
+    {% endif %}
+</div>
+
+<div class="librairy">
+    <h1>我的书店 (Wǒ de shūdiàn)</h1>
+    <p>Ma librairie</p>
+    <div class="cards-container">
+        {% for card in cards %}
+            <div class="card-wrapper">
+                <div class="card hover-flip">
+                    <div class="card-inner">
+                        <!-- RECTO -->
+                        <div class="card-front">
+                            <span class="hsk-badge hsk-{{ card.hsk_level }}">HSK {{ card.hsk_level }}</span>
+                            <p class="card-title">{{ card.chinese }}</p>
+                            <p class="card-subtitle">({{ card.pinyin }})</p>
+                        </div>
+                        
+                        <!-- VERSO avec boutons -->
+                        <div class="card-back">
+                            <p class="card-title">{{ card.french }}</p>
+                            <p class="card-translation">{{ card.chinese }}</p>
+                            <p class="card-subtitle">({{ card.pinyin }})</p>
+                            
+                            <div class="card-actions">
+                                <button type="button" class="btn-action btn-edit" 
+                                    onclick="openEditModal('{{ card.id }}', '{{ card.chinese }}', '{{ card.pinyin }}', '{{ card.french }}', '{{ card.hsk_level }}')">
+                                    <i class="ph ph-pencil-simple"></i>
+                                </button>
+                                
+                                <form method='POST' action='/delete' onsubmit="return confirm('Supprimer cette carte ?');" style="display: inline;">
+                                    <input type='hidden' name='card_id' value='{{ card.id }}'>
+                                    <button type='submit' class="btn-action btn-delete" title="Supprimer">
+                                        <i class="ph ph-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content form-section">
+        <div class="modal-header">
+            <h1><i class="ph ph-pencil-simple"></i> Modifier la carte</h1>
+            <button class="close-modal" onclick="closeEditModal()">&times;</button>
+        </div>
+        
+        <form method='POST' action='/update'>
+            <input type="hidden" name="card_id" id="edit-id">
+            <input type='text' name='chinese' id="edit-chinese" placeholder='Caractères chinois' required>
+            <input type='text' name='pinyin' id="edit-pinyin" placeholder='Pinyin' required>
+            <input type='text' name='french' id="edit-french" placeholder='Français' required>
+            
+            <select name='hsk_level' id="edit-hsk" required>
+                <option value='1'>HSK 1</option>
+                <option value='2'>HSK 2</option>
+                <option value='3'>HSK 3</option>
+                <option value='4'>HSK 4</option>
+                <option value='5'>HSK 5</option>
+                <option value='6'>HSK 6</option>
+            </select>
+
+            <button type='submit'>Enregistrer les modifications</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

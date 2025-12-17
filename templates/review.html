@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="review-container">
+    <h1>训练 (Xùnliàn)</h1>
+    <p>Entraînement</p>
+
+    {% if card %}
+        <div class="review-layout">
+            <div class="card click-flip" id="flashcard">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span class="hsk-badge hsk-{{ card.hsk_level }}">HSK {{ card.hsk_level }}</span>
+                        <p class="card-title">{{ card.chinese }}</p>
+                        <p class="card-subtitle">({{ card.pinyin }})</p>
+                        <small class="hint">Cliquez pour voir la réponse</small>
+                    </div>
+                    <div class="card-back">
+                        <p class="translation">{{ card.french }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-actions" id="review-actions">
+                <form method='POST' action='/mark-reviewed' class="srs-form">
+                    <input type='hidden' name='card_id' value='{{ card.id }}'>
+                    
+                    <button name='difficulty' value='0' class="btn-srs srs-0" title="Je ne sais pas">
+                        <i class="ph ph-caret-circle-double-down"></i> <span>Oublié</span>
+                    </button>
+                    
+                    <button name='difficulty' value='1' class="btn-srs srs-1" title="Difficile">
+                        <i class="ph ph-caret-circle-down"></i> <span>Dur</span>
+                    </button>
+                    
+                    <button name='difficulty' value='2' class="btn-srs srs-2" title="Moyen">
+                        <i class="ph ph-equals"></i> <span>Moyen</span>
+                    </button>
+                    
+                    <button name='difficulty' value='3' class="btn-srs srs-3" title="Facile">
+                        <i class="ph ph-caret-circle-up"></i> <span>Facile</span>
+                    </button>
+                    
+                    <button name='difficulty' value='5' class="btn-srs srs-5" title="Maitrisé">
+                        <i class="ph ph-caret-circle-double-up"></i> <span>Parfait</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="ph ph-coffee"></i>
+            <p>Félicitations ! Vous avez révisé toutes vos cartes.</p>
+            <a href="/" class="nav-item">Retour à la bibliothèque</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
